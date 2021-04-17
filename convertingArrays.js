@@ -113,3 +113,36 @@ let items =  [
         "count": "3"
     }
 ];
+
+function groupCallTypes(items){
+    let groupedCallsArr = []
+    let regionProcessed = []
+    
+    items.forEach (el => {
+        let groupedCallsObj = {}
+        let region = el["region"]
+        let regionName = el["regions"]["name"]
+        let callType = el["call_types"]["type"]
+        let callCount = el["count"]
+        let formattedCallType = callType.match(/([A-Z])\w+/g).join('_').toLowerCase()
+
+        if(!(regionProcessed.includes(regionName))){       
+            groupedCallsObj["name"] = regionName
+            groupedCallsObj["region"] = region
+            groupedCallsObj[formattedCallType] = parseInt(callCount)
+            groupedCallsObj["total"] = ((groupedCallsObj["total"] || 0) + parseInt(callCount))
+            regionProcessed.push(regionName)
+            groupedCallsArr.push(groupedCallsObj)
+        }
+        else if(regionProcessed.includes(regionName)){
+            /* This solution may be improved so the final array of objects (groupedCallsArr) will not rely on the index of regionProcessed array.*/
+            let currentRegion = groupedCallsArr[regionProcessed.indexOf(regionName)]
+            currentRegion[formattedCallType] = parseInt(callCount)
+            currentRegion["total"] += parseInt(callCount)
+        }
+    });
+    
+    return groupedCallsArr
+}
+console.log(groupCallTypes(items))
+
