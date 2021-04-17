@@ -96,3 +96,15 @@ let items = [
         "end": "2019-12-09T21:00:00-06:00"
     }
 ];
+
+//In this case I considered space complexity important and converted the array in place. Otherwise building a new array with formatted dates is a valid solution.
+items.forEach((element, itemIndex, items) => {
+    Object.entries(element).forEach(([key, value]) =>{
+        let date = new Date(value)
+        let dateString = date.toString()
+        dateString = dateString.replace(/(?<=\().+?(?=\))/, date.toLocaleDateString('en-US', {timeZoneName:'long'}).split(',')[1].trim()) 
+        items[itemIndex][key] = dateString
+    });
+});
+
+console.log(items)
